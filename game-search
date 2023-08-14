@@ -1,0 +1,428 @@
+struct dados{
+    char jogo[50];
+    char produtora[20];
+    int quantidade;
+    int preco;
+};
+
+entrada(struct dados *pont){
+    //1 – Entrada de dados
+    system("cls");
+
+    FILE *p;
+    p = fopen("desafio.txt","a");
+
+    getchar();
+    printf("Digite o nome do jogo: ");
+    gets(pont->jogo);
+    printf("Digite o nome da produtora: ");
+    gets(pont->produtora);
+    printf("Digite a quantidade: ");
+    scanf("%d", &pont->quantidade);
+    printf("Digite o preco: ");
+    scanf("%d", &pont->preco);
+
+    fwrite(pont, sizeof(*pont), 1, p);
+
+    fclose(p);
+
+    system("pause");
+}
+
+lista(struct dados *pont){
+    //2 – Lista todos os dados na tela
+    system("cls");
+
+    int i;
+    FILE *p;
+    p = fopen("desafio.txt", "r");
+
+    while (fread(pont, sizeof(*pont), 1, p) != 0)
+    {
+        if (pont->jogo[0] != '\0')
+        {
+            printf("Jogo: %s\n", pont->jogo);
+            printf("Produtora: %s\n", pont->produtora);
+            printf("Quantidade: %d\n", pont->quantidade);
+            printf("Preco: %d\n", pont->preco);
+            printf("\n");
+        }
+    }
+
+    fclose(p);
+    system("pause");
+}
+
+pesquisa_jogo(struct dados *pont){
+    //3 – Pesquisar um jogo pelo nome completo e mostra na tela
+    system("cls");
+
+    int i;
+    char jogo_busca[20], *pontBusca;
+    pontBusca = jogo_busca;
+
+    getchar();
+    printf("Digite o nome do jogo: ");
+    gets(pontBusca);
+
+    FILE *p;
+    p = fopen("desafio.txt", "r");
+
+    while (fread(pont, sizeof(*pont), 1, p) != 0)
+    {
+        for(i=0; *(pontBusca+i) != '\0'; i++)
+        {
+            if (*(pontBusca+i) != pont->jogo[i])
+            {
+                break;
+            }
+        }
+        if (*(pontBusca+i) == '\0' && pont->jogo[i] == '\0')
+        {
+            printf("Jogo: %s\n", pont->jogo);
+            printf("Produtora: %s\n", pont->produtora);
+            printf("Quantidade: %d\n", pont->quantidade);
+            printf("Preco: %d\n", pont->preco);
+            printf("\n");
+        }
+    }
+
+    fclose(p);
+    system("pause");
+}
+
+pesquisa_prod(struct dados *pont){
+    //4 – Pesquisar produtora pelo nome completo
+    system("cls");
+
+    int i;
+    char prod_busca[20], *pontBusca;
+    pontBusca = prod_busca;
+
+    getchar();
+    printf("Digite o nome da produtora: ");
+    gets(pontBusca);
+
+    FILE *p;
+    p = fopen("desafio.txt", "r");
+
+    printf("\nJogos da produtora %s\n\n", pontBusca);
+
+    while (fread(pont, sizeof(*pont), 1, p) != 0)
+    {
+        for(i=0; *(pontBusca+i) != '\0'; i++)
+        {
+            if (*(pontBusca+i) != pont->produtora[i])
+            {
+                break;
+            }
+        }
+        if (*(pontBusca+i) == '\0' && pont->produtora[i] == '\0')
+        {
+            printf("Jogo: %s\n", pont->jogo);
+            printf("Quantidade: %d\n", pont->quantidade);
+            printf("Preco: %d\n", pont->preco);
+            printf("\n");
+        }
+    }
+
+    fclose(p);
+
+    system("pause");
+}
+
+pesquisa_preco(struct dados *pont){
+    //5 – Pesquisa jogo por faixa de preço
+    system("cls");
+
+    int i;
+    int min, max, *pontMin, *pontMax;
+    pontMin = &min;
+    pontMax = &max;
+
+    getchar();
+    printf("Digite o preco minimo: ");
+    scanf("%d", pontMin);
+    printf("Digite o preco maximo: ");
+    scanf("%d", pontMax);
+
+    printf("\nJogos na faixa de preco entre %d e %d\n\n", *pontMin, *pontMax);
+
+    FILE *p;
+    p = fopen("desafio.txt", "r");
+
+    while (fread(pont, sizeof(*pont), 1, p) != 0)
+    {
+        if (pont->preco >= *pontMin && pont-> preco <= *pontMax)
+        {
+            printf("Jogo: %s\n", pont->jogo);
+            printf("Produtora: %s\n", pont->produtora);
+            printf("Quantidade: %d\n", pont->quantidade);
+            printf("Preco: %d\n", pont->preco);
+            printf("\n");
+        }
+
+    }
+
+    fclose(p);
+    system("pause");
+}
+
+altera_quant(struct dados *pont){
+    //6 – Altera quantidade (entrada e saída) pesquisando pelo nome completo
+    system("cls");
+
+    int i, quantIn, quantOut, *pQuantIn, *pQuantOut, cont = 0;
+    char jogo_busca[20], *pontBusca;
+    pontBusca = jogo_busca;
+    pQuantIn = &quantIn;
+    pQuantOut = &quantOut;
+
+    getchar();
+    printf("Digite o nome do jogo: ");
+    gets(pontBusca);
+
+    FILE *p;
+    p = fopen("desafio.txt", "r+");
+
+    while (fread(pont, sizeof(*pont), 1, p) != 0)
+    {
+        cont++;
+        for(i=0; *(pontBusca+i) != '\0'; i++)
+        {
+            if (*(pontBusca+i) != pont->jogo[i])
+            {
+                break;
+            }
+        }
+        if (*(pontBusca+i) == '\0' && pont->jogo[i] == '\0')
+        {
+            printf("Quantidade atual: %d\n", pont->quantidade);
+            printf("Quantidade de entrada: ");
+            scanf("%d", pQuantIn);
+            printf("Quantidade de saida: ");
+            scanf("%d", pQuantOut);
+            pont->quantidade = pont->quantidade + *pQuantIn - *pQuantOut;
+            printf("Nova quantidade: %d\n", pont->quantidade);
+            printf("\n");
+
+            fseek(p, sizeof(struct dados)*(cont-1), 0);
+            fwrite(pont, sizeof(*pont), 1, p);
+            break;
+        }
+    }
+
+    fclose(p);
+    system("pause");
+}
+
+altera_preco(struct dados *pont){
+    //7 – Altera preço de um jogo pesquisado pelo nome completo
+
+    system("cls");
+
+    int i, preco, *pontPreco, cont = 0;
+    char jogo_busca[20], *pontBusca;
+    pontBusca = jogo_busca;
+    pontPreco = &preco;
+
+    getchar();
+    printf("Digite o nome do jogo: ");
+    gets(pontBusca);
+
+    FILE *p;
+    p = fopen("desafio.txt", "r+");
+
+    while (fread(pont, sizeof(*pont), 1, p) != 0)
+    {
+        cont++;
+        for(i=0; *(pontBusca+i) != '\0'; i++)
+        {
+            if (*(pontBusca+i) != pont->jogo[i])
+            {
+                break;
+            }
+        }
+        if (*(pontBusca+i) == '\0' && pont->jogo[i] == '\0')
+        {
+            printf("Preco atual: %d\n", pont->preco);
+            printf("Novo preco: ");
+            scanf("%d", pontPreco);
+            pont->preco = *pontPreco;
+
+            fseek(p, sizeof(struct dados)*(cont-1), 0);
+            fwrite(pont, sizeof(*pont), 1, p);
+            break;
+        }
+    }
+
+    fclose(p);
+    system("pause");
+}
+
+altera_dados(struct dados *pont){
+    //8 – Altera dados. Pesquisa pelo nome completo
+    system("cls");
+
+    int i, cont = 0;
+    char jogo_busca[20], *pontBusca;
+    pontBusca = jogo_busca;
+
+    getchar();
+    printf("Digite o nome do jogo: ");
+    gets(pontBusca);
+
+    FILE *p;
+    p = fopen("desafio.txt", "r+");
+
+    while (fread(pont, sizeof(*pont), 1, p) != 0)
+    {
+        cont++;
+        for(i=0; *(pontBusca+i) != '\0'; i++)
+        {
+            if (*(pontBusca+i) != pont->jogo[i])
+            {
+                break;
+            }
+        }
+        if (*(pontBusca+i) == '\0' && pont->jogo[i] == '\0')
+        {
+            printf("\nRegistro atual:\n");
+            printf("Jogo: %s\n", pont->jogo);
+            printf("Produtora: %s\n", pont->produtora);
+            printf("Quantidade: %d\n", pont->quantidade);
+            printf("Preco: %d\n", pont->preco);
+            printf("\n");
+
+            printf("Novo registro:\n");
+            printf("Jogo: ");
+            gets(pont->jogo);
+            printf("Produtora: ");
+            gets(pont->produtora);
+            printf("Quantidade: ");
+            scanf("%d", &pont->quantidade);
+            printf("Preco: ");
+            scanf("%d", &pont->preco);
+
+            fseek(p, sizeof(struct dados)*(cont-1), 0);
+            fwrite(pont, sizeof(*pont), 1, p);
+            break;
+        }
+    }
+
+    fclose(p);
+    system("pause");
+
+}
+
+exclui(struct dados *pont){
+    //9 – Exclui dados. Pesquisa pelo nome completo
+    system("cls");
+
+    int i, cont = 0;
+    char jogo_busca[20], *pontBusca;
+    pontBusca = jogo_busca;
+
+    getchar();
+    printf("Digite o nome do jogo: ");
+    gets(pontBusca);
+
+    FILE *p;
+    p = fopen("desafio.txt", "r+");
+
+    while (fread(pont, sizeof(*pont), 1, p) != 0)
+    {
+        cont++;
+        for(i=0; *(pontBusca+i) != '\0'; i++)
+        {
+            if (*(pontBusca+i) != pont->jogo[i])
+            {
+                break;
+            }
+        }
+        if (*(pontBusca+i) == '\0' && pont->jogo[i] == '\0')
+        {
+            pont->jogo[0] = ('\0');
+            pont->produtora[0] = ('\0');
+            pont->quantidade = ('\0');
+            pont->preco = ('\0');
+            printf("\nOs dados foram excluidos\n\n");
+
+            fseek(p, sizeof(struct dados)*(cont-1), 0);
+            fwrite(pont, sizeof(*pont), 1, p);
+            break;
+        }
+    }
+
+    fclose(p);
+    system("pause");
+}
+
+main()
+{
+    struct dados info;
+    struct dados *pont;
+    pont = &info;
+    int menu;
+
+    //A única estrutura de dados do programa deve ser uma variável local na função main().
+    //Portanto a passagem da estrutura para as funções utiliza ponteiro.
+    //Cada uma das opções do menu é uma função no programa.
+    //Todas as operações de leitura e escrita devem ser feitas direto no arquivo. (utilize a função fseek quando necessário).
+    //O programa tem um único arquivo de dados. Não pode usar nenhum arquivo auxiliar.
+
+    for(;;)
+    {
+        system("cls");
+
+        printf("Selecione uma opcao:\n");
+        printf("1 - Entrada de dados\n2 - Lista todos os dados na tela\n3 - Pesquisa um jogo pelo nome completo e mostra na tela\n");
+        printf("4 - Pesquisa produtora pelo nome completo\n5 - Pesquisa jogo por faixa de preco\n");
+        printf("6 - Altera quantidade (entrada e saida) pesquisando pelo nome completo\n7 - Altera preco de um jogo pesquisado pelo nome completo\n");
+        printf("8 - Altera dados. Pesquisa pelo nome completo\n9 - Exclui dados. Pesquisa pelo nome completo\n");
+        printf("10 - Saida\n");
+
+        scanf("%d", &menu);
+
+        switch(menu)
+        {
+
+        case 1:
+            entrada(pont);
+            break;
+        case 2:
+            lista(pont);
+            break;
+        case 3:
+            pesquisa_jogo(pont);
+            break;
+        case 4:
+            pesquisa_prod(pont);
+            break;
+        case 5:
+            pesquisa_preco(pont);
+            break;
+        case 6:
+            altera_quant(pont);
+            break;
+        case 7:
+            altera_preco(pont);
+            break;
+        case 8:
+            altera_dados(pont);
+            break;
+        case 9:
+            exclui(pont);
+            break;
+        case 10:
+            exit(0);
+            break;
+        default:
+            printf("Opcao invalida\n");
+            break;
+
+        }
+
+    }
+
+}

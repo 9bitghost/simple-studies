@@ -1,3 +1,5 @@
+#include<stdio.h>
+
 struct dados{
     char jogo[50];
     char produtora[20];
